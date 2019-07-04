@@ -1,4 +1,4 @@
-// Copyright 2018 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,7 +8,7 @@
 #include "third_party/skia/include/core/SkImage.h"
 #include "third_party/skia/include/core/SkPicture.h"
 
-namespace blink {
+namespace flutter {
 
 class SnapshotDelegate {
  public:
@@ -16,6 +16,6 @@ class SnapshotDelegate {
                                             SkISize picture_size) = 0;
 };
 
-}  // namespace blink
+}  // namespace flutter
 
 #endif  // FLUTTER_LIB_UI_SNAPSHOT_DELEGATE_H_

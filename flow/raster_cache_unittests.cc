@@ -1,4 +1,4 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,13 +18,13 @@ sk_sp<SkPicture> GetSamplePicture() {
 }
 
 TEST(RasterCache, SimpleInitialization) {
-  flow::RasterCache cache;
+  flutter::RasterCache cache;
   ASSERT_TRUE(true);
 }
 
 TEST(RasterCache, ThresholdIsRespected) {
   size_t threshold = 3;
-  flow::RasterCache cache(threshold);
+  flutter::RasterCache cache(threshold);
 
   SkMatrix matrix = SkMatrix::I();
 
@@ -46,7 +46,7 @@ TEST(RasterCache, ThresholdIsRespected) {
 
 TEST(RasterCache, ThresholdIsRespectedWhenZero) {
   size_t threshold = 0;
-  flow::RasterCache cache(threshold);
+  flutter::RasterCache cache(threshold);
 
   SkMatrix matrix = SkMatrix::I();
 
@@ -68,7 +68,7 @@ TEST(RasterCache, ThresholdIsRespectedWhenZero) {
 
 TEST(RasterCache, SweepsRemoveUnusedFrames) {
   size_t threshold = 3;
-  flow::RasterCache cache(threshold);
+  flutter::RasterCache cache(threshold);
 
   SkMatrix matrix = SkMatrix::I();
 

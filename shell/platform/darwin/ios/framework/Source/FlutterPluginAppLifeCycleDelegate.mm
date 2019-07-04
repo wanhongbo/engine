@@ -1,4 +1,4 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,6 +10,10 @@
 #include "flutter/shell/platform/darwin/ios/framework/Source/FlutterCallbackCache_Internal.h"
 
 static const char* kCallbackCacheSubDir = "Library/Caches/";
+
+static const SEL selectorsHandledByPlugins[] = {
+    @selector(application:didReceiveRemoteNotification:fetchCompletionHandler:),
+    @selector(application:performFetchWithCompletionHandler:)};
 
 @implementation FlutterPluginAppLifeCycleDelegate {
   UIBackgroundTaskIdentifier _debugBackgroundTask;
@@ -36,6 +40,27 @@ static BOOL isPowerOfTwo(NSUInteger x) {
   return x != 0 && (x & (x - 1)) == 0;
 }
 
+- (BOOL)isSelectorAddedDynamically:(SEL)selector {
+  for (const SEL& aSelector : selectorsHandledByPlugins) {
+    if (selector == aSelector) {
+      return YES;
+    }
+  }
+  return NO;
+}
+
+- (BOOL)hasPluginThatRespondsToSelector:(SEL)selector {
+  for (id<FlutterPlugin> plugin in [_pluginDelegates allObjects]) {
+    if (!plugin) {
+      continue;
+    }
+    if ([plugin respondsToSelector:selector]) {
+      return YES;
+    }
+  }
+  return NO;
+}
+
 - (void)addDelegate:(NSObject<FlutterPlugin>*)delegate {
   [_pluginDelegates addPointer:(__bridge void*)delegate];
   if (isPowerOfTwo([_pluginDelegates count])) {
@@ -60,7 +85,7 @@ static BOOL isPowerOfTwo(NSUInteger x) {
 
 - (BOOL)application:(UIApplication*)application
     willFinishLaunchingWithOptions:(NSDictionary*)launchOptions {
-  blink::DartCallbackCache::LoadCacheFromDisk();
+  flutter::DartCallbackCache::LoadCacheFromDisk();
   for (id<FlutterPlugin> plugin in [_pluginDelegates allObjects]) {
     if (!plugin) {
       continue;
@@ -94,6 +119,7 @@ static BOOL isPowerOfTwo(NSUInteger x) {
   _debugBackgroundTask = [application
       beginBackgroundTaskWithName:@"Flutter debug task"
                 expirationHandler:^{
+                  [application endBackgroundTask:_debugBackgroundTask];
                   FML_LOG(WARNING)
                       << "\nThe OS has terminated the Flutter debug connection for being "
                          "inactive in the background for too long.\n\n"
@@ -197,6 +223,39 @@ static BOOL isPowerOfTwo(NSUInteger x) {
               didReceiveRemoteNotification:userInfo
                     fetchCompletionHandler:completionHandler]) {
         return;
+      }
+    }
+  }
+}
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+- (void)application:(UIApplication*)application
+    didReceiveLocalNotification:(UILocalNotification*)notification {
+  for (id<FlutterPlugin> plugin in _pluginDelegates) {
+    if (!plugin) {
+      continue;
+    }
+    if ([plugin respondsToSelector:_cmd]) {
+      [plugin application:application didReceiveLocalNotification:notification];
+    }
+  }
+}
+#pragma GCC diagnostic pop
+
+- (void)userNotificationCenter:(UNUserNotificationCenter*)center
+       willPresentNotification:(UNNotification*)notification
+         withCompletionHandler:
+             (void (^)(UNNotificationPresentationOptions options))completionHandler {
+  if (@available(iOS 10.0, *)) {
+    for (id<FlutterPlugin> plugin in _pluginDelegates) {
+      if (!plugin) {
+        continue;
+      }
+      if ([plugin respondsToSelector:_cmd]) {
+        [plugin userNotificationCenter:center
+               willPresentNotification:notification
+                 withCompletionHandler:completionHandler];
       }
     }
   }

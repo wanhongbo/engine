@@ -1,4 +1,4 @@
-// Copyright 2018 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,11 +13,13 @@
 #include "flutter/fml/synchronization/thread_annotations.h"
 #include "third_party/dart/runtime/include/dart_api.h"
 
-namespace blink {
+namespace flutter {
 
 class IsolateNameServer {
  public:
-  IsolateNameServer() {}
+  IsolateNameServer();
+
+  ~IsolateNameServer();
 
   // Looks up the Dart_Port associated with a given name. Returns ILLEGAL_PORT
   // if the name does not exist.
@@ -44,6 +46,6 @@ class IsolateNameServer {
   FML_DISALLOW_COPY_AND_ASSIGN(IsolateNameServer);
 };
 
-}  // namespace blink
+}  // namespace flutter
 
 #endif  // FLUTTER_LIB_UI_ISOLATE_NAME_SERVER_H_

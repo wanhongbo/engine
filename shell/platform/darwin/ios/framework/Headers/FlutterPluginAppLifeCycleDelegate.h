@@ -1,4 +1,4 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 FLUTTER_EXPORT
 @interface FlutterPluginAppLifeCycleDelegate : NSObject
+
 /**
  * Registers `delegate` to receive life cycle callbacks via this FlutterPluginAppLifecycleDelegate
  * as long as it is alive.
@@ -66,11 +67,11 @@ FLUTTER_EXPORT
 /**
  * Called if this plugin has been registered for `UIApplicationDelegate` callbacks.
  */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 - (void)application:(UIApplication*)application
-    didRegisterUserNotificationSettings:(UIUserNotificationSettings*)notificationSettings;
-#pragma GCC diagnostic pop
+    didRegisterUserNotificationSettings:(UIUserNotificationSettings*)notificationSettings
+    API_DEPRECATED(
+        "See -[UIApplicationDelegate application:didRegisterUserNotificationSettings:] deprecation",
+        ios(8.0, 10.0));
 
 /**
  * Calls all plugins registered for `UIApplicationDelegate` callbacks.
@@ -84,6 +85,24 @@ FLUTTER_EXPORT
 - (void)application:(UIApplication*)application
     didReceiveRemoteNotification:(NSDictionary*)userInfo
           fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
+
+/**
+ * Calls all plugins registered for `UIApplicationDelegate` callbacks.
+ */
+- (void)application:(UIApplication*)application
+    didReceiveLocalNotification:(UILocalNotification*)notification
+    API_DEPRECATED(
+        "See -[UIApplicationDelegate application:didReceiveLocalNotification:] deprecation",
+        ios(4.0, 10.0));
+
+/**
+ * Calls all plugins registered for `UNUserNotificationCenterDelegate` callbacks.
+ */
+- (void)userNotificationCenter:(UNUserNotificationCenter*)center
+       willPresentNotification:(UNNotification*)notification
+         withCompletionHandler:
+             (void (^)(UNNotificationPresentationOptions options))completionHandler
+    API_AVAILABLE(ios(10));
 
 /**
  * Calls all plugins registered for `UIApplicationDelegate` callbacks in order of registration until

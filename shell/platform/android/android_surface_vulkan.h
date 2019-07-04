@@ -1,4 +1,4 @@
-// Copyright 2016 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,7 +12,7 @@
 #include "flutter/shell/platform/android/android_surface.h"
 #include "flutter/vulkan/vulkan_window.h"
 
-namespace shell {
+namespace flutter {
 
 class AndroidSurfaceVulkan : public AndroidSurface {
  public:
@@ -20,25 +20,25 @@ class AndroidSurfaceVulkan : public AndroidSurface {
 
   ~AndroidSurfaceVulkan() override;
 
-  // |shell::AndroidSurface|
+  // |AndroidSurface|
   bool IsValid() const override;
 
-  // |shell::AndroidSurface|
+  // |AndroidSurface|
   std::unique_ptr<Surface> CreateGPUSurface() override;
 
-  // |shell::AndroidSurface|
+  // |AndroidSurface|
   void TeardownOnScreenContext() override;
 
-  // |shell::AndroidSurface|
+  // |AndroidSurface|
   bool OnScreenSurfaceResize(const SkISize& size) const override;
 
-  // |shell::AndroidSurface|
+  // |AndroidSurface|
   bool ResourceContextMakeCurrent() override;
 
-  // |shell::AndroidSurface|
+  // |AndroidSurface|
   bool ResourceContextClearCurrent() override;
 
-  // |shell::AndroidSurface|
+  // |AndroidSurface|
   bool SetNativeWindow(fml::RefPtr<AndroidNativeWindow> window) override;
 
  private:
@@ -48,6 +48,6 @@ class AndroidSurfaceVulkan : public AndroidSurface {
   FML_DISALLOW_COPY_AND_ASSIGN(AndroidSurfaceVulkan);
 };
 
-}  // namespace shell
+}  // namespace flutter
 
 #endif  // FLUTTER_SHELL_PLATFORM_ANDROID_ANDROID_SURFACE_VULKAN_H_

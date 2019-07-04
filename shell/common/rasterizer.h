@@ -1,4 +1,4 @@
-// Copyright 2015 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,6 +7,7 @@
 
 #include <memory>
 
+#include "flutter/common/settings.h"
 #include "flutter/common/task_runners.h"
 #include "flutter/flow/compositor_context.h"
 #include "flutter/flow/layers/layer_tree.h"
@@ -14,17 +15,30 @@
 #include "flutter/fml/memory/weak_ptr.h"
 #include "flutter/fml/synchronization/waitable_event.h"
 #include "flutter/lib/ui/snapshot_delegate.h"
+#include "flutter/shell/common/pipeline.h"
 #include "flutter/shell/common/surface.h"
-#include "flutter/synchronization/pipeline.h"
 
-namespace shell {
+namespace flutter {
 
-class Rasterizer final : public blink::SnapshotDelegate {
+/// Takes |LayerTree|s and draws its contents.
+class Rasterizer final : public SnapshotDelegate {
  public:
-  Rasterizer(blink::TaskRunners task_runners);
+  class Delegate {
+   public:
+    virtual void OnFrameRasterized(const FrameTiming&) = 0;
+  };
+  // TODO(dnfield): remove once embedders have caught up.
+  class DummyDelegate : public Delegate {
+    void OnFrameRasterized(const FrameTiming&) override {}
+  };
+  Rasterizer(TaskRunners task_runners,
+             std::unique_ptr<flutter::CompositorContext> compositor_context);
 
-  Rasterizer(blink::TaskRunners task_runners,
-             std::unique_ptr<flow::CompositorContext> compositor_context);
+  Rasterizer(Delegate& delegate, TaskRunners task_runners);
+
+  Rasterizer(Delegate& delegate,
+             TaskRunners task_runners,
+             std::unique_ptr<flutter::CompositorContext> compositor_context);
 
   ~Rasterizer();
 
@@ -32,17 +46,22 @@ class Rasterizer final : public blink::SnapshotDelegate {
 
   void Teardown();
 
+  // Frees up Skia GPU resources.
+  //
+  // This method must be called from the GPU task runner.
+  void NotifyLowMemoryWarning() const;
+
   fml::WeakPtr<Rasterizer> GetWeakPtr() const;
 
-  fml::WeakPtr<blink::SnapshotDelegate> GetSnapshotDelegate() const;
+  fml::WeakPtr<SnapshotDelegate> GetSnapshotDelegate() const;
 
-  flow::LayerTree* GetLastLayerTree();
+  flutter::LayerTree* GetLastLayerTree();
 
   void DrawLastLayerTree();
 
-  flow::TextureRegistry* GetTextureRegistry();
+  flutter::TextureRegistry* GetTextureRegistry();
 
-  void Draw(fml::RefPtr<flutter::Pipeline<flow::LayerTree>> pipeline);
+  void Draw(fml::RefPtr<Pipeline<flutter::LayerTree>> pipeline);
 
   enum class ScreenshotType {
     SkiaPicture,
@@ -54,10 +73,13 @@ class Rasterizer final : public blink::SnapshotDelegate {
     sk_sp<SkData> data;
     SkISize frame_size = SkISize::MakeEmpty();
 
-    Screenshot() {}
+    Screenshot();
 
-    Screenshot(sk_sp<SkData> p_data, SkISize p_size)
-        : data(std::move(p_data)), frame_size(p_size) {}
+    Screenshot(sk_sp<SkData> p_data, SkISize p_size);
+
+    Screenshot(const Screenshot& other);
+
+    ~Screenshot();
   };
 
   Screenshot ScreenshotLastLayerTree(ScreenshotType type, bool base64_encode);
@@ -66,31 +88,41 @@ class Rasterizer final : public blink::SnapshotDelegate {
   // the surface on the GPU task runner.
   void SetNextFrameCallback(fml::closure callback);
 
-  flow::CompositorContext* compositor_context() {
+  flutter::CompositorContext* compositor_context() {
     return compositor_context_.get();
   }
 
+  // Sets the max size in bytes of the Skia resource cache. If this call is
+  // originating from the user, e.g. over the flutter/skia system channel,
+  // set from_user to true and the value will take precedence over system
+  // generated values, e.g. from a display resolution change.
+  void SetResourceCacheMaxBytes(size_t max_bytes, bool from_user);
+
+  size_t GetResourceCacheMaxBytes() const;
+
  private:
-  blink::TaskRunners task_runners_;
+  Delegate& delegate_;
+  TaskRunners task_runners_;
   std::unique_ptr<Surface> surface_;
-  std::unique_ptr<flow::CompositorContext> compositor_context_;
-  std::unique_ptr<flow::LayerTree> last_layer_tree_;
+  std::unique_ptr<flutter::CompositorContext> compositor_context_;
+  std::unique_ptr<flutter::LayerTree> last_layer_tree_;
   fml::closure next_frame_callback_;
+  bool user_override_resource_cache_bytes_;
   fml::WeakPtrFactory<Rasterizer> weak_factory_;
 
-  // |blink::SnapshotDelegate|
+  // |SnapshotDelegate|
   sk_sp<SkImage> MakeRasterSnapshot(sk_sp<SkPicture> picture,
                                     SkISize picture_size) override;
 
-  void DoDraw(std::unique_ptr<flow::LayerTree> layer_tree);
+  void DoDraw(std::unique_ptr<flutter::LayerTree> layer_tree);
 
-  bool DrawToSurface(flow::LayerTree& layer_tree);
+  RasterStatus DrawToSurface(flutter::LayerTree& layer_tree);
 
   void FireNextFrameCallbackIfPresent();
 
   FML_DISALLOW_COPY_AND_ASSIGN(Rasterizer);
 };
 
-}  // namespace shell
+}  // namespace flutter
 
 #endif  // SHELL_COMMON_RASTERIZER_H_

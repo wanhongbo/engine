@@ -1,4 +1,4 @@
-// Copyright 2017 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -6,7 +6,7 @@
 
 #import <Foundation/Foundation.h>
 
-namespace shell {
+namespace flutter {
 
 fml::CommandLine CommandLineFromNSProcessInfo() {
   std::vector<std::string> args_vector;
@@ -18,4 +18,4 @@ fml::CommandLine CommandLineFromNSProcessInfo() {
   return fml::CommandLineFromIterators(args_vector.begin(), args_vector.end());
 }
 
-}  // namespace shell
+}  // namespace flutter

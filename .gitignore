@@ -20,3 +20,6 @@ tags
 Thumbs.db
 .idea
 pubspec.lock
+.vscode/
+docs/doxygen/
+xcuserdata

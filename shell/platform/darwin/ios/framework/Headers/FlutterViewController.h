@@ -1,4 +1,4 @@
-// Copyright 2016 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,6 +18,15 @@
 @class FlutterEngine;
 
 /**
+ * The name used for semantic update notifications via `NSNotificationCenter`.
+ *
+ * The object passed as the sender is the `FlutterViewController` associated
+ * with the update.
+ */
+FLUTTER_EXPORT
+extern NSNotificationName const FlutterSemanticsUpdateNotification;
+
+/**
  * A `UIViewController` implementation for Flutter views.
  *
  * Dart execution, channel communication, texture registration, and plugin registration
@@ -32,8 +41,7 @@
  * forth between a FlutterViewController and other `UIViewController`s.
  */
 FLUTTER_EXPORT
-@interface FlutterViewController
-    : UIViewController <FlutterBinaryMessenger, FlutterTextureRegistry, FlutterPluginRegistry>
+@interface FlutterViewController : UIViewController <FlutterTextureRegistry, FlutterPluginRegistry>
 
 /**
  * Initializes this FlutterViewController with the specified `FlutterEngine`.
@@ -88,7 +96,7 @@ FLUTTER_EXPORT
  *
  * @param asset The name of the asset. The name can be hierarchical.
  * @param package The name of the package from which the asset originates.
- * @returns: The file name to be used for lookup in the main bundle.
+ * @return The file name to be used for lookup in the main bundle.
  */
 - (NSString*)lookupKeyForAsset:(NSString*)asset fromPackage:(NSString*)package;
 
@@ -110,7 +118,7 @@ FLUTTER_EXPORT
 
 /**
  * Instructs the Flutter Navigator (if any) to push a route on to the navigation
- * stack.  The setInitialRoute method should be prefered if this is called before the
+ * stack.  The setInitialRoute method should be preferred if this is called before the
  * FlutterViewController has come into view.
  *
  * @param route The name of the route to push to the navigation stack.
@@ -129,14 +137,18 @@ FLUTTER_EXPORT
  * a replacement until the first frame is rendered.
  *
  * The view used should be appropriate for multiple sizes; an autoresizing mask to
- * have a flexible
- * width and height will be applied automatically.
- *
- * If not specified, uses a view generated from `UILaunchStoryboardName` from the
- * main bundle's
- * `Info.plist` file.
+ * have a flexible width and height will be applied automatically.
  */
 @property(strong, nonatomic) UIView* splashScreenView;
+
+/**
+ * Attempts to set the `splashScreenView` property from the `UILaunchStoryboardName` from the
+ * main bundle's `Info.plist` file.  This method will not change the value of `splashScreenView`
+ * if it cannot find a default one from a storyboard or nib.
+ *
+ * @return `YES` if successful, `NO` otherwise.
+ */
+- (BOOL)loadDefaultSplashScreenView;
 
 /**
  * Controls whether the created view will be opaque or not.
@@ -146,6 +158,21 @@ FLUTTER_EXPORT
  * view.
  */
 @property(nonatomic, getter=isViewOpaque) BOOL viewOpaque;
+
+/**
+ * The `FlutterEngine` instance for this view controller.
+ */
+@property(weak, nonatomic, readonly) FlutterEngine* engine;
+
+/**
+ * The `FlutterBinaryMessenger` associated with this FlutterViewController (used for communicating
+ * with channels).
+ *
+ * @deprecated Since |FlutterViewController| just forwards binary messenger calls to the
+ * |FlutterEngine|, just use the FlutterEngine.binaryMessenger.
+ */
+@property(nonatomic, readonly) NSObject<FlutterBinaryMessenger>* binaryMessenger
+    __attribute__((deprecated));
 
 @end
 

@@ -1,12 +1,15 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 #include "flutter/flow/layers/platform_view_layer.h"
 
-namespace flow {
+namespace flutter {
 
-PlatformViewLayer::PlatformViewLayer() = default;
+PlatformViewLayer::PlatformViewLayer(const SkPoint& offset,
+                                     const SkSize& size,
+                                     int64_t view_id)
+    : offset_(offset), size_(size), view_id_(view_id) {}
 
 PlatformViewLayer::~PlatformViewLayer() = default;
 
@@ -14,6 +17,20 @@ void PlatformViewLayer::Preroll(PrerollContext* context,
                                 const SkMatrix& matrix) {
   set_paint_bounds(SkRect::MakeXYWH(offset_.x(), offset_.y(), size_.width(),
                                     size_.height()));
+
+  if (context->view_embedder == nullptr) {
+    FML_LOG(ERROR) << "Trying to embed a platform view but the PrerollContext "
+                      "does not support embedding";
+    return;
+  }
+  std::unique_ptr<EmbeddedViewParams> params =
+      std::make_unique<EmbeddedViewParams>();
+  params->offsetPixels =
+      SkPoint::Make(matrix.getTranslateX(), matrix.getTranslateY());
+  params->sizePoints = size_;
+  params->mutatorsStack = context->mutators_stack;
+  context->view_embedder->PrerollCompositeEmbeddedView(view_id_,
+                                                       std::move(params));
 }
 
 void PlatformViewLayer::Paint(PaintContext& context) const {
@@ -22,12 +39,7 @@ void PlatformViewLayer::Paint(PaintContext& context) const {
                       "does not support embedding";
     return;
   }
-  EmbeddedViewParams params;
-  SkMatrix transform = context.canvas.getTotalMatrix();
-  params.offsetPixels =
-      SkPoint::Make(transform.getTranslateX(), transform.getTranslateY());
-  params.sizePoints = size_;
-
-  context.view_embedder->CompositeEmbeddedView(view_id_, params);
+  SkCanvas* canvas = context.view_embedder->CompositeEmbeddedView(view_id_);
+  context.leaf_nodes_canvas = canvas;
 }
-}  // namespace flow
+}  // namespace flutter

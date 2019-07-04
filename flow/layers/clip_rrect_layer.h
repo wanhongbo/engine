@@ -1,4 +1,4 @@
-// Copyright 2015 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,14 +7,12 @@
 
 #include "flutter/flow/layers/container_layer.h"
 
-namespace flow {
+namespace flutter {
 
 class ClipRRectLayer : public ContainerLayer {
  public:
-  ClipRRectLayer(Clip clip_behavior);
+  ClipRRectLayer(const SkRRect& clip_rrect, Clip clip_behavior);
   ~ClipRRectLayer() override;
-
-  void set_clip_rrect(const SkRRect& clip_rrect) { clip_rrect_ = clip_rrect; }
 
   void Preroll(PrerollContext* context, const SkMatrix& matrix) override;
 
@@ -31,6 +29,6 @@ class ClipRRectLayer : public ContainerLayer {
   FML_DISALLOW_COPY_AND_ASSIGN(ClipRRectLayer);
 };
 
-}  // namespace flow
+}  // namespace flutter
 
 #endif  // FLUTTER_FLOW_LAYERS_CLIP_RRECT_LAYER_H_

@@ -1,4 +1,4 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,7 +10,7 @@
 #include "third_party/skia/include/core/SkString.h"
 #include "third_party/skia/include/core/SkTypeface.h"
 
-namespace blink {
+namespace flutter {
 
 namespace {
 
@@ -21,7 +21,7 @@ void MappingReleaseProc(const void* ptr, void* context) {
 }  // anonymous namespace
 
 AssetManagerFontProvider::AssetManagerFontProvider(
-    std::shared_ptr<blink::AssetManager> asset_manager)
+    std::shared_ptr<AssetManager> asset_manager)
     : asset_manager_(asset_manager) {}
 
 AssetManagerFontProvider::~AssetManagerFontProvider() = default;
@@ -65,7 +65,7 @@ void AssetManagerFontProvider::RegisterAsset(std::string family_name,
 }
 
 AssetManagerFontStyleSet::AssetManagerFontStyleSet(
-    std::shared_ptr<blink::AssetManager> asset_manager)
+    std::shared_ptr<AssetManager> asset_manager)
     : asset_manager_(asset_manager) {}
 
 AssetManagerFontStyleSet::~AssetManagerFontStyleSet() = default;
@@ -123,4 +123,12 @@ SkTypeface* AssetManagerFontStyleSet::matchStyle(const SkFontStyle& pattern) {
   return SkRef(assets_[0].typeface.get());
 }
 
-}  // namespace blink
+AssetManagerFontStyleSet::TypefaceAsset::TypefaceAsset(std::string a)
+    : asset(std::move(a)) {}
+
+AssetManagerFontStyleSet::TypefaceAsset::TypefaceAsset(
+    const AssetManagerFontStyleSet::TypefaceAsset& other) = default;
+
+AssetManagerFontStyleSet::TypefaceAsset::~TypefaceAsset() = default;
+
+}  // namespace flutter

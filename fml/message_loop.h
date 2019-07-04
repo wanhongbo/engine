@@ -1,4 +1,4 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,6 +18,10 @@ class MessageLoop {
   FML_EMBEDDER_ONLY
   static MessageLoop& GetCurrent();
 
+  enum class Type { kConcurrent };
+
+  MessageLoop(Type type);
+
   bool IsValid() const;
 
   void Run();
@@ -33,6 +37,8 @@ class MessageLoop {
   // Exposed for the embedder shell which allows clients to poll for events
   // instead of dedicating a thread to the message loop.
   void RunExpiredTasksNow();
+
+  void SwapTaskQueues(MessageLoop* other);
 
   static void EnsureInitializedForCurrentThread();
 

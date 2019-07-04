@@ -1,4 +1,4 @@
-// Copyright 2016 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -6,7 +6,7 @@
 
 #include <utility>
 
-namespace blink {
+namespace flutter {
 
 PlatformMessage::PlatformMessage(std::string channel,
                                  std::vector<uint8_t> data,
@@ -24,4 +24,4 @@ PlatformMessage::PlatformMessage(std::string channel,
 
 PlatformMessage::~PlatformMessage() = default;
 
-}  // namespace blink
+}  // namespace flutter

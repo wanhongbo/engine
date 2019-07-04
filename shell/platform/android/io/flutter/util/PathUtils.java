@@ -1,10 +1,11 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package io.flutter.util;
 
 import android.content.Context;
+import android.os.Build;
 
 public final class PathUtils {
     public static String getFilesDir(Context applicationContext) {
@@ -16,6 +17,10 @@ public final class PathUtils {
     }
 
     public static String getCacheDirectory(Context applicationContext) {
-        return applicationContext.getCacheDir().getPath();
+        if (Build.VERSION.SDK_INT >= 21) {
+            return applicationContext.getCodeCacheDir().getPath();
+        } else {
+            return applicationContext.getCacheDir().getPath();
+        }
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2015 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,7 +9,7 @@
 #include "flutter/lib/ui/text/paragraph_impl.h"
 #include "flutter/lib/ui/text/text_box.h"
 
-namespace blink {
+namespace flutter {
 
 class ParagraphImplTxt : public ParagraphImpl {
  public:
@@ -19,6 +19,7 @@ class ParagraphImplTxt : public ParagraphImpl {
 
   double width() override;
   double height() override;
+  double longestLine() override;
   double minIntrinsicWidth() override;
   double maxIntrinsicWidth() override;
   double alphabeticBaseline() override;
@@ -33,6 +34,7 @@ class ParagraphImplTxt : public ParagraphImpl {
       unsigned end,
       txt::Paragraph::RectHeightStyle rect_height_style,
       txt::Paragraph::RectWidthStyle rect_width_style) override;
+  std::vector<TextBox> getRectsForPlaceholders() override;
   Dart_Handle getPositionForOffset(double dx, double dy) override;
   Dart_Handle getWordBoundary(unsigned offset) override;
 
@@ -41,6 +43,6 @@ class ParagraphImplTxt : public ParagraphImpl {
   double m_width = -1.0;
 };
 
-}  // namespace blink
+}  // namespace flutter
 
 #endif  // FLUTTER_LIB_UI_TEXT_PARAGRAPH_IMPL_TXT_H_

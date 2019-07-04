@@ -1,4 +1,4 @@
-// Copyright 2018 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,7 +12,7 @@ namespace tonic {
 class DartLibraryNatives;
 }  // namespace tonic
 
-namespace blink {
+namespace flutter {
 
 class IsolateNameServerNatives {
  public:
@@ -23,6 +23,6 @@ class IsolateNameServerNatives {
   static void RegisterNatives(tonic::DartLibraryNatives* natives);
 };
 
-}  // namespace blink
+}  // namespace flutter
 
 #endif  // FLUTTER_LIB_UI_ISOLATE_NAME_SERVER_NATIVES_H_

@@ -1,4 +1,4 @@
-// Copyright 2016 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,7 +13,7 @@ namespace tonic {
 class DartLibraryNatives;
 }  // namespace tonic
 
-namespace blink {
+namespace flutter {
 
 class SemanticsUpdate : public RefCountedDartWrappable<SemanticsUpdate> {
   DEFINE_WRAPPERTYPEINFO();
@@ -41,6 +41,6 @@ class SemanticsUpdate : public RefCountedDartWrappable<SemanticsUpdate> {
   CustomAccessibilityActionUpdates actions_;
 };
 
-}  // namespace blink
+}  // namespace flutter
 
 #endif  // FLUTTER_LIB_UI_SEMANTICS_SEMANTICS_UPDATE_H_

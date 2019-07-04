@@ -1,4 +1,4 @@
-// Copyright 2016 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -30,7 +30,7 @@ class ServiceClient {
       'id': key,
     });
     client.add(request);
-    final Completer<Map<String, dynamic>> completer = new Completer<Map<String, dynamic>>();
+    final Completer<Map<String, dynamic>> completer = Completer<Map<String, dynamic>>();
     _outstandingRequests[key] = completer;
     print('-> $key ($method)');
     return completer.future;

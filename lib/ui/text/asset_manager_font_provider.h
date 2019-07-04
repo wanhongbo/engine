@@ -1,4 +1,4 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,11 +16,11 @@
 #include "third_party/skia/include/core/SkTypeface.h"
 #include "txt/font_asset_provider.h"
 
-namespace blink {
+namespace flutter {
 
 class AssetManagerFontStyleSet : public SkFontStyleSet {
  public:
-  AssetManagerFontStyleSet(std::shared_ptr<blink::AssetManager> asset_manager);
+  AssetManagerFontStyleSet(std::shared_ptr<AssetManager> asset_manager);
 
   ~AssetManagerFontStyleSet() override;
 
@@ -39,10 +39,15 @@ class AssetManagerFontStyleSet : public SkFontStyleSet {
   SkTypeface* matchStyle(const SkFontStyle& pattern) override;
 
  private:
-  std::shared_ptr<blink::AssetManager> asset_manager_;
+  std::shared_ptr<AssetManager> asset_manager_;
 
   struct TypefaceAsset {
-    TypefaceAsset(std::string a) : asset(std::move(a)) {}
+    TypefaceAsset(std::string a);
+
+    TypefaceAsset(const TypefaceAsset& other);
+
+    ~TypefaceAsset();
+
     std::string asset;
     sk_sp<SkTypeface> typeface;
   };
@@ -53,7 +58,7 @@ class AssetManagerFontStyleSet : public SkFontStyleSet {
 
 class AssetManagerFontProvider : public txt::FontAssetProvider {
  public:
-  AssetManagerFontProvider(std::shared_ptr<blink::AssetManager> asset_manager);
+  AssetManagerFontProvider(std::shared_ptr<AssetManager> asset_manager);
 
   ~AssetManagerFontProvider() override;
 
@@ -77,6 +82,6 @@ class AssetManagerFontProvider : public txt::FontAssetProvider {
   FML_DISALLOW_COPY_AND_ASSIGN(AssetManagerFontProvider);
 };
 
-}  // namespace blink
+}  // namespace flutter
 
 #endif  // FLUTTER_LIB_UI_TEXT_ASSET_MANAGER_FONT_PROVIDER_H_

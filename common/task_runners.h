@@ -1,4 +1,4 @@
-// Copyright 2017 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,7 +10,7 @@
 #include "flutter/fml/macros.h"
 #include "flutter/fml/task_runner.h"
 
-namespace blink {
+namespace flutter {
 
 class TaskRunners {
  public:
@@ -19,6 +19,8 @@ class TaskRunners {
               fml::RefPtr<fml::TaskRunner> gpu,
               fml::RefPtr<fml::TaskRunner> ui,
               fml::RefPtr<fml::TaskRunner> io);
+
+  TaskRunners(const TaskRunners& other);
 
   ~TaskRunners();
 
@@ -42,6 +44,6 @@ class TaskRunners {
   fml::RefPtr<fml::TaskRunner> io_;
 };
 
-}  // namespace blink
+}  // namespace flutter
 
 #endif  // FLUTTER_COMMON_TASK_RUNNERS_H_

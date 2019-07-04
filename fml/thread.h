@@ -1,4 +1,4 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -24,12 +24,12 @@ class Thread {
 
   void Join();
 
+  static void SetCurrentThreadName(const std::string& name);
+
  private:
   std::unique_ptr<std::thread> thread_;
   fml::RefPtr<fml::TaskRunner> task_runner_;
   std::atomic_bool joined_;
-
-  static void SetCurrentThreadName(const std::string& name);
 
   FML_DISALLOW_COPY_AND_ASSIGN(Thread);
 };

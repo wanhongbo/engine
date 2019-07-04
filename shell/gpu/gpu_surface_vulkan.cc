@@ -1,11 +1,11 @@
-// Copyright 2016 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 #include "flutter/shell/gpu/gpu_surface_vulkan.h"
 #include "flutter/fml/logging.h"
 
-namespace shell {
+namespace flutter {
 
 GPUSurfaceVulkan::GPUSurfaceVulkan(
     fml::RefPtr<vulkan::VulkanProcTable> proc_table,
@@ -15,12 +15,12 @@ GPUSurfaceVulkan::GPUSurfaceVulkan(
 
 GPUSurfaceVulkan::~GPUSurfaceVulkan() = default;
 
-// |shell::Surface|
+// |Surface|
 bool GPUSurfaceVulkan::IsValid() {
   return window_.IsValid();
 }
 
-// |shell::Surface|
+// |Surface|
 std::unique_ptr<SurfaceFrame> GPUSurfaceVulkan::AcquireFrame(
     const SkISize& size) {
   auto surface = window_.AcquireSurface();
@@ -44,7 +44,7 @@ std::unique_ptr<SurfaceFrame> GPUSurfaceVulkan::AcquireFrame(
                                         std::move(callback));
 }
 
-// |shell::Surface|
+// |Surface|
 SkMatrix GPUSurfaceVulkan::GetRootTransformation() const {
   // This backend does not support delegating to the underlying platform to
   // query for root surface transformations. Just return identity.
@@ -53,9 +53,9 @@ SkMatrix GPUSurfaceVulkan::GetRootTransformation() const {
   return matrix;
 }
 
-// |shell::Surface|
+// |Surface|
 GrContext* GPUSurfaceVulkan::GetContext() {
   return window_.GetSkiaGrContext();
 }
 
-}  // namespace shell
+}  // namespace flutter

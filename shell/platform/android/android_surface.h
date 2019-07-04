@@ -1,4 +1,4 @@
-// Copyright 2016 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,7 +15,7 @@
 #include "flutter/shell/platform/android/android_native_window.h"
 #include "third_party/skia/include/core/SkSize.h"
 
-namespace shell {
+namespace flutter {
 
 class AndroidSurface {
  public:
@@ -38,6 +38,6 @@ class AndroidSurface {
   virtual bool SetNativeWindow(fml::RefPtr<AndroidNativeWindow> window) = 0;
 };
 
-}  // namespace shell
+}  // namespace flutter
 
 #endif  // FLUTTER_SHELL_PLATFORM_ANDROID_ANDROID_SURFACE_H_

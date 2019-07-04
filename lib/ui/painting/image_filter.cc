@@ -1,4 +1,4 @@
-// Copyright 2016 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,7 +13,7 @@
 #include "third_party/tonic/dart_binding_macros.h"
 #include "third_party/tonic/dart_library_natives.h"
 
-namespace blink {
+namespace flutter {
 
 static void ImageFilter_constructor(Dart_NativeArguments args) {
   DartCallConstructor(&ImageFilter::Create, args);
@@ -63,4 +63,4 @@ void ImageFilter::initMatrix(const tonic::Float64List& matrix4,
       nullptr);
 }
 
-}  // namespace blink
+}  // namespace flutter

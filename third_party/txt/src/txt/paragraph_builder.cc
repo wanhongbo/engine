@@ -63,18 +63,12 @@ void ParagraphBuilder::AddText(const std::u16string& text) {
   text_.insert(text_.end(), text.begin(), text.end());
 }
 
-void ParagraphBuilder::AddText(const std::string& text) {
-  auto icu_text = icu::UnicodeString::fromUTF8(text);
-  std::u16string u16_text(icu_text.getBuffer(),
-                          icu_text.getBuffer() + icu_text.length());
-  AddText(u16_text);
-}
-
-void ParagraphBuilder::AddText(const char* text) {
-  auto icu_text = icu::UnicodeString::fromUTF8(text);
-  std::u16string u16_text(icu_text.getBuffer(),
-                          icu_text.getBuffer() + icu_text.length());
-  AddText(u16_text);
+void ParagraphBuilder::AddPlaceholder(PlaceholderRun& span) {
+  obj_replacement_char_indexes_.insert(text_.size());
+  runs_.StartRun(PeekStyleIndex(), text_.size());
+  AddText(std::u16string(1ull, objReplacementChar));
+  runs_.StartRun(PeekStyleIndex(), text_.size());
+  inline_placeholders_.push_back(span);
 }
 
 std::unique_ptr<Paragraph> ParagraphBuilder::Build() {
@@ -82,8 +76,11 @@ std::unique_ptr<Paragraph> ParagraphBuilder::Build() {
 
   std::unique_ptr<Paragraph> paragraph = std::make_unique<Paragraph>();
   paragraph->SetText(std::move(text_), std::move(runs_));
+  paragraph->SetInlinePlaceholders(std::move(inline_placeholders_),
+                                   std::move(obj_replacement_char_indexes_));
   paragraph->SetParagraphStyle(paragraph_style_);
   paragraph->SetFontCollection(font_collection_);
+  SetParagraphStyle(paragraph_style_);
   return paragraph;
 }
 

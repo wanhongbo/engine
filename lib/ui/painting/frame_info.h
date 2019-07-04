@@ -1,4 +1,4 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,7 +12,7 @@ namespace tonic {
 class DartLibraryNatives;
 }  // namespace tonic
 
-namespace blink {
+namespace flutter {
 
 // A single animation frame.
 class FrameInfo final : public RefCountedDartWrappable<FrameInfo> {
@@ -25,9 +25,9 @@ class FrameInfo final : public RefCountedDartWrappable<FrameInfo> {
   static void RegisterNatives(tonic::DartLibraryNatives* natives);
 
  private:
-  FrameInfo(fml::RefPtr<CanvasImage> image, int durationMillis)
-      : image_(std::move(image)), durationMillis_(durationMillis) {}
-  ~FrameInfo(){};
+  FrameInfo(fml::RefPtr<CanvasImage> image, int durationMillis);
+
+  ~FrameInfo() override;
 
   const fml::RefPtr<CanvasImage> image_;
   const int durationMillis_;
@@ -36,6 +36,6 @@ class FrameInfo final : public RefCountedDartWrappable<FrameInfo> {
   FML_FRIEND_REF_COUNTED_THREAD_SAFE(FrameInfo);
 };
 
-}  // namespace blink
+}  // namespace flutter
 
 #endif  // FLUTTER_LIB_UI_PAINTING_FRAME_INFO_H_

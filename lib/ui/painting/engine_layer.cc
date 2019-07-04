@@ -1,4 +1,4 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,7 +13,10 @@
 
 using tonic::ToDart;
 
-namespace blink {
+namespace flutter {
+
+EngineLayer::EngineLayer(std::shared_ptr<flutter::ContainerLayer> layer)
+    : layer_(layer) {}
 
 EngineLayer::~EngineLayer() = default;
 
@@ -30,4 +33,4 @@ IMPLEMENT_WRAPPERTYPEINFO(ui, EngineLayer);
 
 DART_BIND_ALL(EngineLayer, FOR_EACH_BINDING)
 
-}  // namespace blink
+}  // namespace flutter

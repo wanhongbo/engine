@@ -1,4 +1,4 @@
-// Copyright 2015 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,7 +7,7 @@
 #include "flutter/flow/layers/layer_tree.h"
 #include "third_party/skia/include/core/SkCanvas.h"
 
-namespace flow {
+namespace flutter {
 
 CompositorContext::CompositorContext() = default;
 
@@ -17,7 +17,7 @@ void CompositorContext::BeginFrame(ScopedFrame& frame,
                                    bool enable_instrumentation) {
   if (enable_instrumentation) {
     frame_count_.Increment();
-    frame_time_.Start();
+    raster_time_.Start();
   }
 }
 
@@ -25,7 +25,7 @@ void CompositorContext::EndFrame(ScopedFrame& frame,
                                  bool enable_instrumentation) {
   raster_cache_.SweepAfterFrame();
   if (enable_instrumentation) {
-    frame_time_.Stop();
+    raster_time_.Stop();
   }
 }
 
@@ -60,11 +60,17 @@ CompositorContext::ScopedFrame::~ScopedFrame() {
   context_.EndFrame(*this, instrumentation_enabled_);
 }
 
-bool CompositorContext::ScopedFrame::Raster(flow::LayerTree& layer_tree,
-                                            bool ignore_raster_cache) {
+RasterStatus CompositorContext::ScopedFrame::Raster(
+    flutter::LayerTree& layer_tree,
+    bool ignore_raster_cache) {
   layer_tree.Preroll(*this, ignore_raster_cache);
+  // Clearing canvas after preroll reduces one render target switch when preroll
+  // paints some raster cache.
+  if (canvas()) {
+    canvas()->clear(SK_ColorTRANSPARENT);
+  }
   layer_tree.Paint(*this, ignore_raster_cache);
-  return true;
+  return RasterStatus::kSuccess;
 }
 
 void CompositorContext::OnGrContextCreated() {
@@ -77,4 +83,4 @@ void CompositorContext::OnGrContextDestroyed() {
   raster_cache_.Clear();
 }
 
-}  // namespace flow
+}  // namespace flutter

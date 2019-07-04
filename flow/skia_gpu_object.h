@@ -1,4 +1,4 @@
-// Copyright 2017 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,7 +13,7 @@
 #include "flutter/fml/task_runner.h"
 #include "third_party/skia/include/core/SkRefCnt.h"
 
-namespace flow {
+namespace flutter {
 
 // A queue that holds Skia objects that must be destructed on the the given task
 // runner.
@@ -83,6 +83,6 @@ class SkiaGPUObject {
   FML_DISALLOW_COPY_AND_ASSIGN(SkiaGPUObject);
 };
 
-}  // namespace flow
+}  // namespace flutter
 
 #endif  // FLUTTER_FLOW_SKIA_GPU_OBJECT_H_

@@ -1,4 +1,4 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -6,6 +6,7 @@
 #define FLUTTER_FLUTTERPLUGIN_H_
 
 #import <UIKit/UIKit.h>
+#import <UserNotifications/UNUserNotificationCenter.h>
 
 #include "FlutterBinaryMessenger.h"
 #include "FlutterChannels.h"
@@ -15,6 +16,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 @protocol FlutterPluginRegistrar;
+@protocol FlutterPluginRegistry;
+
+/**
+ * A plugin registration callback.
+ *
+ * Used for registering plugins with additional instances of
+ * `FlutterPluginRegistry`.
+ *
+ * @param registry The registry to register plugins with.
+ */
+typedef void (*FlutterPluginRegistrantCallback)(NSObject<FlutterPluginRegistry>* registry);
 
 /**
  * Implemented by the iOS part of a Flutter plugin.
@@ -42,6 +54,19 @@ NS_ASSUME_NONNULL_BEGIN
  *     registering callbacks.
  */
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar;
+@optional
+/**
+ * Set a callback for registering plugins to an additional `FlutterPluginRegistry`,
+ * including headless `FlutterEngine` instances.
+ *
+ * This method is typically called from within an application's `AppDelegate` at
+ * startup to allow for plugins which create additional `FlutterEngine` instances
+ * to register the application's plugins.
+ *
+ * @param callback A callback for registering some set of plugins with a
+ *     `FlutterPluginRegistry`.
+ */
++ (void)setPluginRegistrantCallback:(FlutterPluginRegistrantCallback)callback;
 @optional
 /**
  * Called if this plugin has been registered to receive `FlutterMethodCall`s.
@@ -95,11 +120,11 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Called if this plugin has been registered for `UIApplicationDelegate` callbacks.
  */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 - (void)application:(UIApplication*)application
-    didRegisterUserNotificationSettings:(UIUserNotificationSettings*)notificationSettings;
-#pragma GCC diagnostic pop
+    didRegisterUserNotificationSettings:(UIUserNotificationSettings*)notificationSettings
+    API_DEPRECATED(
+        "See -[UIApplicationDelegate application:didRegisterUserNotificationSettings:] deprecation",
+        ios(8.0, 10.0));
 
 /**
  * Called if this plugin has been registered for `UIApplicationDelegate` callbacks.
@@ -115,6 +140,24 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)application:(UIApplication*)application
     didReceiveRemoteNotification:(NSDictionary*)userInfo
           fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
+
+/**
+ * Calls all plugins registered for `UIApplicationDelegate` callbacks.
+ */
+- (void)application:(UIApplication*)application
+    didReceiveLocalNotification:(UILocalNotification*)notification
+    API_DEPRECATED(
+        "See -[UIApplicationDelegate application:didReceiveLocalNotification:] deprecation",
+        ios(4.0, 10.0));
+
+/**
+ * Calls all plugins registered for `UNUserNotificationCenterDelegate` callbacks.
+ */
+- (void)userNotificationCenter:(UNUserNotificationCenter*)center
+       willPresentNotification:(UNNotification*)notification
+         withCompletionHandler:
+             (void (^)(UNNotificationPresentationOptions options))completionHandler
+    API_AVAILABLE(ios(10));
 
 /**
  * Called if this plugin has been registered for `UIApplicationDelegate` callbacks.
@@ -206,7 +249,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSObject<FlutterTextureRegistry>*)textures;
 
 /**
- * Registers a `FlutterPlatformViewFactory` for creation of platfrom views.
+ * Registers a `FlutterPlatformViewFactory` for creation of platform views.
  *
  * Plugins expose `UIView` for embedding in Flutter apps by registering a view factory.
  *

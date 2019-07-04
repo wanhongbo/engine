@@ -1,4 +1,4 @@
-// Copyright 2018 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,7 +7,7 @@
 #include "flutter/fml/make_copyable.h"
 #include "flutter/shell/platform/android/platform_view_android_jni.h"
 
-namespace shell {
+namespace flutter {
 
 PlatformMessageResponseAndroid::PlatformMessageResponseAndroid(
     int response_id,
@@ -17,7 +17,9 @@ PlatformMessageResponseAndroid::PlatformMessageResponseAndroid(
       weak_java_object_(weak_java_object),
       platform_task_runner_(std::move(platform_task_runner)) {}
 
-// |blink::PlatformMessageResponse|
+PlatformMessageResponseAndroid::~PlatformMessageResponseAndroid() = default;
+
+// |flutter::PlatformMessageResponse|
 void PlatformMessageResponseAndroid::Complete(
     std::unique_ptr<fml::Mapping> data) {
   platform_task_runner_->PostTask(
@@ -27,7 +29,7 @@ void PlatformMessageResponseAndroid::Complete(
   ]() {
         // We are on the platform thread. Attempt to get the strong reference to
         // the Java object.
-        auto env = fml::jni::AttachCurrentThread();
+        auto* env = fml::jni::AttachCurrentThread();
         auto java_object = weak_java_object.get(env);
 
         if (java_object.is_null()) {
@@ -49,7 +51,7 @@ void PlatformMessageResponseAndroid::Complete(
       }));
 }
 
-// |blink::PlatformMessageResponse|
+// |flutter::PlatformMessageResponse|
 void PlatformMessageResponseAndroid::CompleteEmpty() {
   platform_task_runner_->PostTask(
       fml::MakeCopyable([response = response_id_,              //
@@ -57,7 +59,7 @@ void PlatformMessageResponseAndroid::CompleteEmpty() {
   ]() {
         // We are on the platform thread. Attempt to get the strong reference to
         // the Java object.
-        auto env = fml::jni::AttachCurrentThread();
+        auto* env = fml::jni::AttachCurrentThread();
         auto java_object = weak_java_object.get(env);
 
         if (java_object.is_null()) {
@@ -70,4 +72,4 @@ void PlatformMessageResponseAndroid::CompleteEmpty() {
                                                  response, nullptr);
       }));
 }
-}  // namespace shell
+}  // namespace flutter

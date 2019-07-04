@@ -1,4 +1,4 @@
-// Copyright 2016 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,7 +13,7 @@
 #include "flutter/vulkan/vulkan_native_surface.h"
 #include "flutter/vulkan/vulkan_window.h"
 
-namespace shell {
+namespace flutter {
 
 class GPUSurfaceVulkan : public Surface {
  public:
@@ -22,16 +22,16 @@ class GPUSurfaceVulkan : public Surface {
 
   ~GPUSurfaceVulkan() override;
 
-  // |shell::Surface|
+  // |Surface|
   bool IsValid() override;
 
-  // |shell::Surface|
+  // |Surface|
   std::unique_ptr<SurfaceFrame> AcquireFrame(const SkISize& size) override;
 
-  // |shell::Surface|
+  // |Surface|
   SkMatrix GetRootTransformation() const override;
 
-  // |shell::Surface|
+  // |Surface|
   GrContext* GetContext() override;
 
  private:
@@ -41,6 +41,6 @@ class GPUSurfaceVulkan : public Surface {
   FML_DISALLOW_COPY_AND_ASSIGN(GPUSurfaceVulkan);
 };
 
-}  // namespace shell
+}  // namespace flutter
 
 #endif  // SHELL_GPU_GPU_SURFACE_VULKAN_H_

@@ -1,4 +1,4 @@
-// Copyright 2017 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,11 +15,7 @@
 @interface FlutterViewController ()
 
 - (fml::WeakPtr<FlutterViewController>)getWeakPtr;
-- (shell::FlutterPlatformViewsController*)platformViewsController;
-
-@property(readonly) fml::scoped_nsobject<FlutterEngine> engine;
-
-- (flow::ExternalViewEmbedder*)viewEmbedder;
+- (flutter::FlutterPlatformViewsController*)platformViewsController;
 
 @end
 

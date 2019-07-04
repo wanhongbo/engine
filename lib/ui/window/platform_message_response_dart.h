@@ -1,4 +1,4 @@
-// Copyright 2016 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,7 +9,7 @@
 #include "flutter/lib/ui/window/platform_message_response.h"
 #include "third_party/tonic/dart_persistent_value.h"
 
-namespace blink {
+namespace flutter {
 
 class PlatformMessageResponseDart : public PlatformMessageResponse {
   FML_FRIEND_MAKE_REF_COUNTED(PlatformMessageResponseDart);
@@ -29,6 +29,6 @@ class PlatformMessageResponseDart : public PlatformMessageResponse {
   fml::RefPtr<fml::TaskRunner> ui_task_runner_;
 };
 
-}  // namespace blink
+}  // namespace flutter
 
 #endif  // FLUTTER_LIB_UI_PLATFORM_PLATFORM_MESSAGE_RESPONSE_DART_H_
